@@ -8,6 +8,7 @@ const { authRouter } = require("./router/auth");
 const { jobsRouter } = require("./router/jobs");
 require("dotenv").config();
 const { connectDataBase } = require("./db/connect");
+const { errorHandler } = require("./middleware/errorHandler");
 
 app.use(express.json());
 
@@ -20,6 +21,8 @@ app.all("*", async (req, res) => {
         data: ReasonPhrases.NOT_FOUND,
     });
 });
+
+app.use(errorHandler);
 
 const startServer = async (connectionString) => {
     try {
