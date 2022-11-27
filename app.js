@@ -4,10 +4,15 @@ require("express-async-errors");
 const port = 3000;
 const host = "localhost";
 const { StatusCodes, ReasonPhrases } = require("http-status-codes");
-const { router } = require("./router/router");
+const { authRouter } = require("./router/auth");
+const { jobsRouter } = require("./router/jobs");
+require("dotenv").config();
+const { connectDataBase } = require("./db/connect");
 
 app.use(express.json());
-app.use("/api/v1/", router);
+
+app.use("/api/v1/jobs/auth/", authRouter);
+app.use("/api/v1/jobs/", jobsRouter);
 
 app.all("*", (req, res) => {
     res.status(StatusCodes.NOT_FOUND).json({
@@ -16,8 +21,9 @@ app.all("*", (req, res) => {
     });
 });
 
-const startServer = async () => {
+const startServer = async (connectionString) => {
     try {
+        await connectDataBase(connectionString);
         app.listen(port, host, () => {
             console.log(`Server is listening on http://${host}:${port}`);
         });
@@ -26,4 +32,4 @@ const startServer = async () => {
     }
 };
 
-startServer();
+startServer(process.env.MONGO_DB_CONNECTION_STRING);
