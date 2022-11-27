@@ -14,7 +14,7 @@ app.use(express.json());
 app.use("/api/v1/jobs/auth/", authRouter);
 app.use("/api/v1/jobs/", jobsRouter);
 
-app.all("*", (req, res) => {
+app.all("*", async (req, res) => {
     res.status(StatusCodes.NOT_FOUND).json({
         success: false,
         data: ReasonPhrases.NOT_FOUND,
