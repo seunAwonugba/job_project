@@ -1,7 +1,7 @@
 const { StatusCodes } = require("http-status-codes");
 
 const createJob = async (req, res) => {
-    res.status(StatusCodes.OK).json({
+    res.status(StatusCodes.CREATED).json({
         success: true,
         data: "job successfully created",
     });
@@ -22,7 +22,7 @@ const getJob = async (req, res) => {
 };
 
 const updateJob = async (req, res) => {
-    res.status(StatusCodes.OK).json({
+    res.status(StatusCodes.CREATED).json({
         success: true,
         data: "job updated successfully",
     });
