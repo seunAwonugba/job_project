@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
+const uniqueValidator = require("mongoose-unique-validator");
 
 const UserSchema = new mongoose.Schema({
     name: {
@@ -11,6 +12,7 @@ const UserSchema = new mongoose.Schema({
         required: [true, "Email address is required"],
         validate: [validator.default.isEmail, "Invalid email address"],
         unique: true,
+        uniqueCaseInsensitive: true,
     },
     password: {
         type: String,
@@ -20,6 +22,10 @@ const UserSchema = new mongoose.Schema({
             "Minimum length is 8, must contain 1 lowercase,  must contain 1 uppercase, must contain 1 number, and must contain 1 symbol ",
         ],
     },
+});
+
+UserSchema.plugin(uniqueValidator, {
+    message: "Email address: '{VALUE}', already exist",
 });
 
 const userModel = mongoose.model("userModel", UserSchema);

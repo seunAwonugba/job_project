@@ -1,5 +1,5 @@
 const { CustomErrorHandler } = require("../errors/CustomErrorHandler");
-const { StatusCodes, ReasonPhrases } = require("http-status-codes");
+const { StatusCodes } = require("http-status-codes");
 
 const errorHandler = (err, req, res, next) => {
     if (err instanceof CustomErrorHandler) {
@@ -10,7 +10,7 @@ const errorHandler = (err, req, res, next) => {
     }
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
         success: false,
-        data: ReasonPhrases.INTERNAL_SERVER_ERROR,
+        data: err,
     });
 };
 
