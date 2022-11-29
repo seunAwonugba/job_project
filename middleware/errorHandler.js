@@ -1,16 +1,18 @@
-const { CustomErrorHandler } = require("../errors/CustomErrorHandler");
+const { CustomErrorHandler } = require("../errors/index");
 const { StatusCodes } = require("http-status-codes");
 
 const errorHandler = (err, req, res, next) => {
     if (err instanceof CustomErrorHandler) {
+        //controller error goes here
         return res.status(err.statusCode).json({
             success: false,
             data: err.message,
         });
     }
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        //db error goes here
         success: false,
-        data: err,
+        data: err.message.split(":")[2],
     });
 };
 

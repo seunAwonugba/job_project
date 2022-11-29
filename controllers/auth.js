@@ -1,6 +1,6 @@
 const { StatusCodes } = require("http-status-codes");
 const { userModel } = require("../db/models/user");
-const { BadRequest } = require("../errors/BadRequest");
+const { BadRequest } = require("../errors/index");
 
 const register = async (req, res, next) => {
     const { name, email, password } = req.body;
