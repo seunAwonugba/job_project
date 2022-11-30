@@ -1,14 +1,10 @@
 const { StatusCodes } = require("http-status-codes");
 const { userModel } = require("../db/models/user");
 const { BadRequest } = require("../errors/index");
-const bcryptjs = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 const register = async (req, res, next) => {
     const { name, email, password } = req.body;
-
-    const hashedAndSaltPassword = await bcryptjs.hash(password, 12);
-
-    const savedCredentials = { name, email, password: hashedAndSaltPassword };
 
     if (!name) {
         return next(new BadRequest("Name is required"));
@@ -19,10 +15,29 @@ const register = async (req, res, next) => {
     if (!password) {
         return next(new BadRequest("Password is required"));
     }
-    const createUser = await userModel.create({ ...savedCredentials });
+    const createUser = await userModel.create({ ...req.body });
+
+    //create token the moment u create user
+    const token = jwt.sign(
+        {
+            userId: createUser._id,
+            userName: createUser.name,
+            userEmail: createUser.email,
+        },
+        "DUMMY_JWT_SECRET",
+        { expiresIn: "30d" }
+    );
+
+    console.log(createUser);
+
     res.status(StatusCodes.CREATED).json({
         success: true,
-        data: createUser,
+        data: {
+            id: createUser._id,
+            name: createUser.name,
+            email: createUser.email,
+        },
+        token,
     });
 };
 

@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 const uniqueValidator = require("mongoose-unique-validator");
+const bcryptjs = require("bcryptjs");
 
 const UserSchema = new mongoose.Schema({
     name: {
@@ -26,6 +27,11 @@ const UserSchema = new mongoose.Schema({
 
 UserSchema.plugin(uniqueValidator, {
     message: "'{VALUE}', already exist",
+});
+
+UserSchema.pre("save", async function () {
+    //before saving this document, hash and salt password
+    this.password = await bcryptjs.hash(this.password, 12);
 });
 
 const userModel = mongoose.model("userModel", UserSchema);
