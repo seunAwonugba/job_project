@@ -2,6 +2,10 @@ const mongoose = require("mongoose");
 const validator = require("validator");
 const uniqueValidator = require("mongoose-unique-validator");
 const bcryptjs = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
+
+console.log(process.env.JWT_LIFETIME);
 
 const UserSchema = new mongoose.Schema({
     name: {
@@ -33,6 +37,20 @@ UserSchema.pre("save", async function () {
     //before saving this document, hash and salt password
     this.password = await bcryptjs.hash(this.password, 12);
 });
+
+UserSchema.methods.createJWT = function () {
+    return jwt.sign(
+        {
+            id: this.id,
+            name: this.name,
+            email: this.email,
+        },
+        process.env.JWT_SECRET,
+        {
+            expiresIn: process.env.JWT_LIFETIME,
+        }
+    );
+};
 
 const userModel = mongoose.model("userModel", UserSchema);
 
