@@ -5,8 +5,6 @@ const bcryptjs = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
-console.log(process.env.JWT_LIFETIME);
-
 const UserSchema = new mongoose.Schema({
     name: {
         type: String,

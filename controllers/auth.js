@@ -1,6 +1,6 @@
 const { StatusCodes } = require("http-status-codes");
 const { userModel } = require("../db/models/user");
-const { BadRequest } = require("../errors/index");
+const { BadRequest, Unauthenticated } = require("../errors/index");
 
 const register = async (req, res, next) => {
     const { name, email, password } = req.body;
@@ -21,7 +21,7 @@ const register = async (req, res, next) => {
     res.status(StatusCodes.CREATED).json({
         success: true,
         data: {
-            id: createUser._id,
+            id: createUser.id,
             name: createUser.name,
             email: createUser.email,
         },
@@ -29,10 +29,36 @@ const register = async (req, res, next) => {
     });
 };
 
-const login = async (req, res) => {
-    res.status(StatusCodes.CREATED).json({
+const login = async (req, res, next) => {
+    const { email, password } = req.body;
+
+    if (!email) {
+        return next(new BadRequest("Email address is required"));
+    }
+
+    if (!password) {
+        return next(new BadRequest("Password is required"));
+    }
+
+    //if both input fields are not empty query db
+    const findUser = await userModel.findOne({ email });
+
+    if (!findUser) {
+        return next(
+            new Unauthenticated("Sorry we could not find this credential")
+        );
+    }
+
+    const token = findUser.createJWT();
+
+    res.status(StatusCodes.OK).json({
         success: true,
-        data: "Login successful",
+        data: {
+            id: findUser.id,
+            name: findUser.name,
+            email: findUser.email,
+        },
+        token,
     });
 };
 
