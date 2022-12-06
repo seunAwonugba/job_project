@@ -45,7 +45,19 @@ const login = async (req, res, next) => {
 
     if (!findUser) {
         return next(
-            new Unauthenticated("Sorry we could not find this credential")
+            new Unauthenticated(
+                "The email address or password you entered is incorrect"
+            )
+        );
+    }
+
+    const correctPassword = await findUser.comparePasswords(password);
+
+    if (!correctPassword) {
+        return next(
+            new Unauthenticated(
+                "The email address or password you entered is incorrect"
+            )
         );
     }
 

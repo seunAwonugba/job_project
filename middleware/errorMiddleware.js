@@ -1,8 +1,7 @@
 const { CustomErrorHandler } = require("../errors/index");
 const { StatusCodes } = require("http-status-codes");
 
-const errorHandler = (err, req, res, next) => {
-    console.log(err);
+const errorMiddleware = (err, req, res, next) => {
     if (err instanceof CustomErrorHandler) {
         //controller error goes here, err.message is different in the 2 instance
         return res.status(err.statusCode).json({
@@ -10,6 +9,7 @@ const errorHandler = (err, req, res, next) => {
             data: err.message,
         });
     }
+    console.log(`the error is error middleware -> ${err}`);
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
         //db error goes here
         success: false,
@@ -17,4 +17,4 @@ const errorHandler = (err, req, res, next) => {
     });
 };
 
-module.exports = { errorHandler };
+module.exports = { errorMiddleware };

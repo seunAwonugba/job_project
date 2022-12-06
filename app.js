@@ -8,12 +8,13 @@ const { authRouter } = require("./router/auth");
 const { jobsRouter } = require("./router/jobs");
 require("dotenv").config();
 const { connectDataBase } = require("./db/connect");
-const { errorHandler } = require("./middleware/errorHandler");
+const { errorMiddleware } = require("./middleware/errorMiddleware");
+const { authMiddleware } = require("./middleware/authMiddleware");
 
 app.use(express.json());
 
 app.use("/api/v1/jobs/auth/", authRouter);
-app.use("/api/v1/jobs/", jobsRouter);
+app.use("/api/v1/jobs/", authMiddleware, jobsRouter);
 
 app.all("*", async (req, res) => {
     res.status(StatusCodes.NOT_FOUND).json({
@@ -22,7 +23,7 @@ app.all("*", async (req, res) => {
     });
 });
 
-app.use(errorHandler);
+app.use(errorMiddleware);
 
 const startServer = async (connectionString) => {
     try {
