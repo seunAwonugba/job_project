@@ -18,6 +18,8 @@ const authMiddleware = async (req, res, next) => {
         const decode = jwt.verify(token, process.env.JWT_SECRET);
 
         //if verification is successfully, set up a property on the request object, call it user, and pass it to the next middleware which it the next route after logging in
+
+        //req.user can be accessed in any route that is authenticated
         req.user = {
             id: decode.id,
             name: decode.name,

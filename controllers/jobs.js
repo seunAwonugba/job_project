@@ -1,4 +1,5 @@
 const { StatusCodes } = require("http-status-codes");
+const {} = require("../db/models/user");
 
 const createJob = async (req, res) => {
     res.status(StatusCodes.CREATED).json({
@@ -8,9 +9,10 @@ const createJob = async (req, res) => {
 };
 
 const getJobs = async (req, res) => {
+    //access req.user form authmiddleware
     res.status(StatusCodes.OK).json({
         success: true,
-        data: "jobs fetched successfully",
+        data: req.user,
     });
 };
 
