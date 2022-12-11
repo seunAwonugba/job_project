@@ -9,7 +9,7 @@ const errorMiddleware = (err, req, res, next) => {
             data: err.message,
         });
     }
-    console.log(`the error is error middleware -> ${err}`);
+    console.log(`error middleware -> ${err}`);
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
         //db error goes here
         success: false,
