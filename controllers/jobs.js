@@ -1,6 +1,7 @@
 const { StatusCodes } = require("http-status-codes");
 const { jobsModel } = require("../db/models/jobs");
-const { BadRequest } = require("../errors");
+// const { userModel } = require("../db/models/user");
+const { BadRequest, NotFound } = require("../errors");
 
 const createJob = async (req, res) => {
     //by default,if u dont pass created by value in your payload, this will get it for u, from the req.user in auth middleware
@@ -14,17 +15,31 @@ const createJob = async (req, res) => {
 
 const getJobs = async (req, res) => {
     //access req.user form auth middleware
+    const getJobsByUser = await jobsModel
+        .find({
+            createdBy: req.user.id,
+        })
+        .sort("createdAt");
     res.status(StatusCodes.OK).json({
         success: true,
-        data: req.user,
+        data: getJobsByUser,
+        count: getJobsByUser.length,
     });
 };
 
-const getJob = async (req, res) => {
-    res.status(StatusCodes.OK).json({
-        success: true,
-        data: "job fetched successfully",
-    });
+const getJob = async (req, res, next) => {
+    const { id } = req.params;
+
+    const getJob = await jobsModel.findById(id);
+
+    if (getJob) {
+        res.status(StatusCodes.OK).json({
+            success: true,
+            data: getJob,
+        });
+    } else {
+        return next(new NotFound("Job not found"));
+    }
 };
 
 const updateJob = async (req, res) => {
@@ -41,4 +56,24 @@ const deleteJob = async (req, res) => {
     });
 };
 
-module.exports = { createJob, getJobs, getJob, updateJob, deleteJob };
+// const getUserJobs = async (req, res) => {
+//     const getUserJobs = await jobsModel
+//         .find({
+//             createdBy: req.user.id,
+//         })
+//         .sort("createdAt");
+//     res.status(StatusCodes.OK).json({
+//         success: true,
+//         data: getUserJobs,
+//         count: getUserJobs.length,
+//     });
+// };
+
+module.exports = {
+    createJob,
+    getJobs,
+    getJob,
+    updateJob,
+    deleteJob,
+    // getUserJobs,
+};
