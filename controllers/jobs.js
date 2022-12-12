@@ -42,11 +42,35 @@ const getJob = async (req, res, next) => {
     }
 };
 
-const updateJob = async (req, res) => {
-    res.status(StatusCodes.CREATED).json({
-        success: true,
-        data: "job updated successfully",
-    });
+const updateJob = async (req, res, next) => {
+    // const { id } = req.params;
+
+    const {
+        user: { id: userId },
+        params: { id: pathId },
+    } = req;
+
+    req.body.createdBy = userId;
+
+    const body = req.body;
+
+    const options = {
+        new: true,
+        runValidators: true,
+        overwrite: true,
+        context: "query",
+    };
+
+    const updateJob = await jobsModel.findByIdAndUpdate(pathId, body, options);
+
+    if (updateJob) {
+        res.status(StatusCodes.CREATED).json({
+            success: true,
+            data: updateJob,
+        });
+    } else {
+        return next(new NotFound("Job not found, and cannot be updated"));
+    }
 };
 
 const deleteJob = async (req, res) => {
