@@ -73,11 +73,21 @@ const updateJob = async (req, res, next) => {
     }
 };
 
-const deleteJob = async (req, res) => {
-    res.status(StatusCodes.OK).json({
-        success: true,
-        data: "job successfully deleted",
-    });
+const deleteJob = async (req, res, next) => {
+    const {
+        params: { id: pathId },
+    } = req;
+
+    const deleteJob = await jobsModel.findByIdAndDelete(pathId);
+
+    if (deleteJob) {
+        res.status(StatusCodes.OK).json({
+            success: true,
+            data: "job successfully deleted",
+        });
+    } else {
+        return next(new NotFound("Job not found and cannot delete job"));
+    }
 };
 
 // const getUserJobs = async (req, res) => {
