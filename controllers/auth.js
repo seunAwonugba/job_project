@@ -14,6 +14,7 @@ const register = async (req, res, next) => {
     if (!password) {
         return next(new BadRequest("Password is required"));
     }
+    //with .create you can insert many, hence the spread operator
     const createUser = await userModel.create({ ...req.body });
 
     //create token the moment u create user
